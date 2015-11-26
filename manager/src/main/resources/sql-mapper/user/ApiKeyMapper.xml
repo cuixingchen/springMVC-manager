@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haier.channel.api.appkey.AppKeyDao">
+
+	<resultMap type="com.haier.channel.api.appkey.entity.Api_AppKey"
+		id="api_AppKeyResult">
+		<result property="appKey" column="appKey" />
+		<result property="secretKey" column="secretKey" />
+		<result property="ordSource" column="ordSource" />
+		<result property="stockSource" column="stockSource" />
+		<result property="orderAdapter" column="orderAdapter" />
+		<result property="auth" column="auth" />
+		<result property="addTime" column="addTime" />
+		<result property="updateTime" column="updateTime" />
+	</resultMap>
+
+	<resultMap type="com.haier.channel.api.appkey.entity.Api_Resource"
+		id="api_ResourceResult">
+		<result property="id" column="id" />
+		<result property="resource" column="resource" />
+		<result property="resource_des" column="resource_des" />
+		<result property="addTime" column="addTime" />
+		<result property="updateTime" column="updateTime" />
+	</resultMap>
+
+
+	<select id="queryApi_AppKeyList" resultMap="api_AppKeyResult">
+		select * from `api_appkey`
+	</select>
+	<select id="queryApi_ResourceList" resultMap="api_ResourceResult">
+		select * from `api_resource`
+	</select>
+
+	<insert id="insertAppKey" parameterType="com.haier.channel.api.appkey.entity.Api_AppKey">
+		insert `api_appkey`(`appKey`,`secretKey`,`ordSource`,`stockSource`,`orderAdapter`,`auth`,`addTime`)
+		 values(#{appKey},#{secretKey},#{ordSource},#{stockSource},#{orderAdapter},#{auth},#{addTime})
+	</insert>
+	<update id="updateAppKey" parameterType="com.haier.channel.api.appkey.entity.Api_AppKey" >
+		update `api_appkey`
+		<set>
+        <trim suffix="" suffixOverrides=",">
+			<if test="secretKey != null">
+				`secretKey`=#{secretKey},
+			</if>
+			<if test="ordSource != null">
+				`ordSource`=#{ordSource},
+			</if>
+			<if test="stockSource != null">
+				`stockSource`=#{stockSource},
+			</if>
+			<if test="orderAdapter != null">
+				`orderAdapter`=#{orderAdapter},
+			</if>
+			<if test="auth != null">
+				`auth`=#{auth},
+			</if>
+			<if test="updateTime != null">
+				`updateTime`=#{updateTime},
+			</if>
+			</trim>
+		</set>
+		where `appKey` = #{appKey}
+	</update>
+	
+	<insert id="insertAppResource" parameterType="com.haier.channel.api.appkey.entity.Api_Resource">
+		insert `api_resource`(`resource`,`resource_des`,`addTime`) values(#{resource},#{resource_des},#{addTime})
+	</insert>
+	<update id="updateResourceByResource" parameterType="com.haier.channel.api.appkey.entity.Api_Resource">
+		update `api_resource` 
+		<set>
+        <trim suffix="" suffixOverrides=",">
+			<if test="resource != null">
+				`resource`=#{resource},
+			</if>
+			<if test="resource_des != null">
+				`resource_des`=#{resource_des},
+			</if>
+			<if test="updateTime != null">
+				`updateTime`=#{updateTime},
+			</if>
+			</trim>
+		</set>
+		where `id` = #{id}
+	</update>
+</mapper>

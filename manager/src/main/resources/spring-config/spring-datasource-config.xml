@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans default-autowire="byName">
+	<bean id="apiReadDataSurce" class="org.apache.tomcat.jdbc.pool.DataSource">
+	<!-- jdbc properties -->
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="${pom.jdbc.log.url}?characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull" />
+		<property name="username" value="${pom.jdbc.log.username}" />
+		<property name="password" value="${pom.jdbc.log.password}" />
+		
+		<property name="defaultAutoCommit" value="true" />
+		
+		<property name="initialSize" value="1" />
+		<property name="minIdle" value="1" />
+		<property name="maxIdle" value="2" />
+		<property name="maxActive" value="50" />
+		<property name="maxWait" value="2000" />
+		<property name="testOnBorrow" value="true" />
+		<property name="validationQuery" value="/* ping */ select 1" />
+		<property name="validationInterval" value="60000" />
+		
+		<property name="testWhileIdle" value="true" />
+		<property name="timeBetweenEvictionRunsMillis" value="120000" />
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+	</bean>
+	
+	
+	
+	<bean id="apiWriteDataSurce" class="org.apache.tomcat.jdbc.pool.DataSource">
+	<!-- jdbc properties -->
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="${pom.jdbc.log.url}?characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull" />
+		<property name="username" value="${pom.jdbc.log.username}" />
+		<property name="password" value="${pom.jdbc.log.password}" />
+		
+		<property name="defaultAutoCommit" value="true" />
+		
+		<property name="initialSize" value="1" />
+		<property name="minIdle" value="1" />
+		<property name="maxIdle" value="2" />
+		<property name="maxActive" value="50" />
+		<property name="maxWait" value="2000" />
+		<property name="testOnBorrow" value="true" />
+		<property name="validationQuery" value="/* ping */ select 1" />
+		<property name="validationInterval" value="60000" />
+		
+		<property name="testWhileIdle" value="true" />
+		<property name="timeBetweenEvictionRunsMillis" value="120000" />
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+	</bean>
+	
+</beans>

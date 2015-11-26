@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd    
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd"
+	default-autowire="byName">
+	<context:component-scan base-package="com.cui.manager.controller.**" />
+
+	<aop:config>
+		<aop:advisor order="1" advice-ref="SessionChkInjectInterceptor" pointcut="execution(* com.haier.channel.web.controller..*.*(..))"/>
+		<aop:advisor order="2" advice-ref="WebExecuteInterceptor" pointcut="execution(* com.haier.channel.web.controller..*.*(..))" />
+		<aop:advisor order="3" advice-ref="WebServiceExecuteInterceptor" pointcut="execution(* com.haier.channel.web.webservice..*.*(..))" />
+		<aop:advisor order="4" advice-ref="AppKeyInjectInterceptor" pointcut="execution(* com.haier.channel.web.controller.api.*.*(..))"/>
+	</aop:config>
+
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="contentType" value="text/html;charset=utf-8"></property>
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+		<property name="order" value="2" />
+	</bean>
+
+	<bean id="exceptionResolver"
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="com.haier.common.BusinessException">error</prop>
+				<prop key="java.io.IOException">error</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+		p:maxUploadSize="5120000" p:maxInMemorySize="512" p:defaultEncoding="UTF-8" />
+
+
+	  <bean id="jacksonHttpMessageConverter"  class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/html;charset=UTF-8</value>
+                <value>applicaton/json;charset=UTF-8</value> 
+            </list>
+        </property>
+    </bean>
+    <!-- 返回xml -->
+<bean id="xmlHttpMessageConverter" class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter">
+         <property name="supportedMediaTypes">
+            <list>
+                <value>applicaton/xml;charset=UTF-8</value> 
+                <value>text/xml;charset=UTF-8</value>
+            </list>
+        </property>
+</bean>
+
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                	<property name = "supportedMediaTypes">
+                      <list>
+                          <value>text/html;charset=UTF-8</value>   
+                     </list>   
+                </property>    
+                </bean>
+                <bean class="org.springframework.http.converter.FormHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
+                <ref bean="jacksonHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter"/>
+            </list>
+        </property>
+    </bean>
+	<!-- <bean
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<bean
+					class="org.springframework.http.converter.StringHttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+                <value>text/html;charset=UTF-8</value>
+                <value>applicaton/json;charset=UTF-8</value> 
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>  -->
+  <mvc:annotation-driven>
+	<mvc:message-converters>
+		<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+			<property name="supportedMediaTypes">
+				<list>
+					<value>text/plain;charset=UTF-8</value>
+				</list>
+			</property>
+		</bean>
+		<bean id="mappingJacksonHttpMessageConverter"
+			class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+			<property name="supportedMediaTypes">
+				<list>
+					<value>applicaton/json;charset=UTF-8</value>
+				</list>
+			</property>
+		</bean>
+	</mvc:message-converters>
+<!-- 	<mvc:argument-resolvers>
+		处理pageable的实例化，避免出现无法实例化接口的问题，并使得能够使用PageableDefault注解提供默认初始值
+		<bean class="org.springframework.data.web.PageableArgumentResolver"></bean>
+	</mvc:argument-resolvers> -->
+</mvc:annotation-driven>
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/review/**" />
+			<bean class="com.haier.channel.web.controller.review.PsiLogInterceptor">
+				<constructor-arg ref="memcachedClientSession"/>
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+  <mvc:default-servlet-handler/>
+  
+    <!-- <bean id="psiLogAfBfInterceptor" class="com.haier.channel.web.controller.review.PsiLogBeforeAfter">
+    	<constructor-arg ref="memcachedClientSession"/>
+    </bean>
+	<aop:config>
+		<aop:advisor advice-ref="psiLogAfBfInterceptor" pointcut="execution(* com.haier.channel.web.controller.review.ReviewController.*(..))"/>
+	</aop:config> -->
+	
+	<!-- aop log -->
+	<bean id="psiLogAspectBean" class="com.haier.channel.web.controller.review.PsiLogAspect" />
+	<aop:config>
+		<aop:pointcut
+			expression="execution(* com.haier.channel.web.controller.review.ReviewController.*(..))"
+			id="psiLogPointCut" />
+		<aop:aspect id="psiLogAspect" ref="psiLogAspectBean">
+			<aop:before pointcut-ref="psiLogPointCut" method="logBefore" />
+			<aop:after-throwing pointcut-ref="psiLogPointCut" method="logException" throwing="ex" />
+		</aop:aspect>
+	</aop:config>
+	
+</beans>
+	
